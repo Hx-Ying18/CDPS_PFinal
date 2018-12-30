@@ -1,39 +1,35 @@
-# It is implements teh Deploy, a command line interpreter tool that allows to deploy an arquitecture
+# It is implemented the Deploy, a command line interpreter tool that allows to deploy an arquitecture
+
+import click
 
 from subprocess import call
 import logging
 import sys
+import os
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('pfinalp2')
 
-argsLen = len(sys.argv)
-args = sys.argv
-
-def setup():
-    print('Hello world')
-    # line = "wget http://idefix.dit.upm.es/cdps/pfinal/pfinal.tgz"
-    # call(line, shell=True)
-    # line = "sudo vnx --unpack pfinal.tgz"
-    # call(line, shell=True)
-    # line = "cd pfinal"
-    # call(line, shell=True)
-    # line = "bin/prepare-pfinal-vm"
-    # call(line, shell=True)
-
-if argsLen > 1:
-    task = args[1]
-    logger.debug("The task is : "+ str(task))
-
-    if task == "setup":
-        setup()
-    elif task == "help":
-        print()
-else:
-    print('This is not a Deploy command')
+@click.group()
+def cli():
+    pass
 
 
+@cli.command()
+def setupvnx():
+    """Download the vnx xml of pfinal."""
+    click.echo("Download the vnx xml of pfinal")
+    line = "wget http://idefix.dit.upm.es/cdps/pfinal/pfinal.tgz"
+    call(line, shell=True)
+    line = "sudo vnx --unpack pfinal.tgz"
+    call(line, shell=True)
+    line = "cd pfinal"
+    call(line, shell=True)
+    line = "bin/prepare-pfinal-vm"
+    call(line, shell=True)
 
-
-
-
+@cli.command()
+def up():
+    """Boot the system ."""
+    click.echo("Boot the system ")
+    os.system("sudo vnx -f pfinal.xml --create")
