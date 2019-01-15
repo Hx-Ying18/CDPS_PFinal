@@ -93,8 +93,8 @@ def bbdd(ctx):
     """Config the BBDD as in the statment"""
 
     logger.info("[2/7] Configuring BBDD  ")
-    os.system('sudo cp ../deployBBDD.sh /var/lib/lxc/bbdd/rootfs/root')
     os.system('chmod 777 ../deployBBDD.sh')
+    os.system('sudo cp ../deployBBDD.sh /var/lib/lxc/bbdd/rootfs/root')
     os.system('sudo lxc-attach --clear-env -n bbdd -- /root/deployBBDD.sh')
 
     # os.system('sudo cp ../testBBDD.sh /var/lib/lxc/bbdd/rootfs/root')
@@ -115,8 +115,43 @@ def bbdd(ctx):
 
 @cli.command()
 @click.pass_context
-def cluster():
+def cluster(ctx):
+
     """Config gluster in nasX and in front servers"""
+
+    logger.info("[3/7] Configuring storage cluster for images  ")
+    os.system('chmod 777 ../configClusterInNas.sh')
+
+    logger.info("Configuring the IPs in Nas ")
+    for i in range(3):
+        os.system('sudo cp ../configClusterInNas.sh /var/lib/lxc/nas'+str(i+1)+'/rootfs/root')
+
+    for i in range(3):
+        os.system('sudo lxc-attach --clear-env -n nas'+str(i+1)+' -- /root/configClusterInNas.sh')
+
+    os.system("sudo lxc-attach --clear-env -n nas1 -- gluster peer probe nas2")
+    os.system("sudo lxc-attach --clear-env -n nas1 -- gluster peer probe nas3")
+    os.system("sudo lxc-attach --clear-env -n nas1 -- gluster peer status")
+    os.system("sudo lxc-attach --clear-env -n nas1 -- gluster volume create nas replica 3 nas1:/nas nas2:/nas nas3:/nas force")
+
+    os.system("sudo lxc-attach --clear-env -n nas1 -- gluster volume start nas")
+
+    for i in range(3):
+        os.system('sudo lxc-attach --clear-env -n nas'+str(i+1)+' -- gluster volume set nas network.ping-timeout 5')
+
+    os.system("sudo lxc-attach --clear-env -n nas1 -- gluster volume info")
+
+    logger.info("[4/7] cluster configured")
+
+    question = raw_input("If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        # click.echo(question[0])
+        question = input("If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+        ctx.invoke(destroy)
+    else:
+        ctx.invoke(greet)
 
 @cli.command()
 @click.pass_context
@@ -144,7 +179,8 @@ def fw(ctx):
 def greet():
     """Say hello in your machine"""
     click.echo("Hi")
-    hi()
+    # for i in range(3):
+    #     hi()
     # test()
 
 def hi():
