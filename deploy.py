@@ -80,8 +80,33 @@ def destroy():
 
 @cli.command()
 @click.pass_context
-def bbdd():
+def restart(ctx):
+    """Destroy the system"""
+    logger.info("Restart the system ")
+    ctx.invoke(destroy)
+    ctx.invoke(up)
+
+@cli.command()
+@click.pass_context
+def bbdd(ctx):
+
     """Config the BBDD as in the statment"""
+
+    logger.info("[2/7] Configuring BBDD  ")
+    os.system('sudo cp ../deployBBDD.sh /var/lib/lxc/bbdd/rootfs/root')
+    os.system('chmod 777 ../deployBBDD.sh')
+    os.system('sudo lxc-attach --clear-env -n bbdd -- /root/deployBBDD.sh')
+    logger.info("[3/7] BBDD configured")
+
+    question = raw_input("If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        # click.echo(question[0])
+        question = input("If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+        ctx.invoke(destroy)
+    else:
+        ctx.invoke(cluster)
 
 @cli.command()
 @click.pass_context
@@ -149,6 +174,8 @@ def test():
         ctx.invoke(bye)
     else:
         ctx.invoke(greet)
+
+
 
 @cli.command()
 @click.pass_context
