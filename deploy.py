@@ -96,6 +96,11 @@ def bbdd(ctx):
     os.system('sudo cp ../deployBBDD.sh /var/lib/lxc/bbdd/rootfs/root')
     os.system('chmod 777 ../deployBBDD.sh')
     os.system('sudo lxc-attach --clear-env -n bbdd -- /root/deployBBDD.sh')
+
+    # os.system('sudo cp ../testBBDD.sh /var/lib/lxc/bbdd/rootfs/root')
+    # os.system('chmod 777 ../testBBDD.sh')
+    # os.system('sudo lxc-attach --clear-env -n bbdd -- /root/testBBDD.sh')
+
     logger.info("[3/7] BBDD configured")
 
     question = raw_input("If no errors, may continue? (y/n)")
