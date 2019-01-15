@@ -28,11 +28,22 @@ def setupvnx():
     call(line, shell=True)
 
 @cli.command()
-def up():
-    """Boot the system """
-    logger.debug("Boot the system ")
+@click.pass_context
+def up(ctx):
+    """Create and boot the system """
+    logger.debug("nBoot the system ")
     os.system("sudo vnx -f pfinal.xml --create")
     # os.system("sudo vnx -f pfinal.xml --show-map")
+    logger.debug("SYSTEM BOOTED?")
+    question = raw_input("If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        # click.echo(question[0])
+        question = input("If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+        ctx.invoke(destroy)
+    else:
+        ctx.invoke(greet)
 
 @cli.command()
 def greetAll():
@@ -83,6 +94,11 @@ def conffront():
 def greet():
     """Say hello in your machine"""
     click.echo("Hi")
+    hi()
+    # test()
+
+def hi():
+    click.echo("Hi!!!")
 
 @cli.command()
 def bye():
@@ -90,21 +106,44 @@ def bye():
     click.echo("Bye")
 
 @cli.command()
-def test():
+@click.pass_context
+def test1(ctx):
     """Test questions"""
-    greet()
+    ctx.invoke(greet)
     question = raw_input("If no errors, may continue? (y/n)")
     while question.lower() not in ("y", "n"):
         click.echo(question[0])
         question = input("If there are no errors, may continue? (y/n)")
     if question != "y":
-        bye()
+        ctx.invoke(bye)
     else:
-       greet()
+        ctx.invoke(greet)
+
+def test():
+    """Test questions"""
+    question = raw_input("If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        click.echo(question[0])
+        question = input("If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+    else:
+        ctx.invoke(greet)
 
 @cli.command()
 @click.pass_context
+def chainTC(ctx):
+    """Test chain"""
+    ctx.invoke(greet)
+    ctx.invoke(test1)
+
 def chain(ctx):
     """Test chain"""
     ctx.invoke(greet)
+    test()
+
+@click.pass_context
+def start(ctx):
+    """Test chain"""
+    ctx.invoke(up)
     ctx.invoke(bye)
