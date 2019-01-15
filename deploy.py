@@ -79,3 +79,8 @@ def confcluster():
 @cli.command()
 def conffront():
     """Config the front servers"""
+
+@cli.command()
+def continueTest():
+    """Test questions"""
+    click.echo("Hi man")
