@@ -96,9 +96,10 @@ def front():
 @cli.command()
 @click.pass_context
 def fw(ctx):
-    """Config the FW as in the statment"""
+    """FW only allows access through ping and to the port 80 of the lb"""
     logger.info("[1/7] Configuring firewall")
-
+    call('sudo lxc-attach --clear-env -n fw -- /root/fw.fw', shell=True)
+    logger.info("[2/7] Configured firewall")
     question = raw_input("If no errors, may continue? (y/n)")
     while question.lower() not in ("y", "n"):
         # click.echo(question[0])
