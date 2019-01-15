@@ -31,10 +31,10 @@ def setupvnx():
 @click.pass_context
 def up(ctx):
     """Create and boot the system """
-    logger.debug("nBoot the system ")
+    logger.debug("[0/7] Boot the system ")
     os.system("sudo vnx -f pfinal.xml --create")
     # os.system("sudo vnx -f pfinal.xml --show-map")
-    logger.debug("SYSTEM BOOTED?")
+    logger.debug("[1/7] System boot")
     question = raw_input("If no errors, may continue? (y/n)")
     while question.lower() not in ("y", "n"):
         # click.echo(question[0])
@@ -43,7 +43,7 @@ def up(ctx):
         ctx.invoke(bye)
         ctx.invoke(destroy)
     else:
-        ctx.invoke(greet)
+        ctx.invoke(fw)
 
 @cli.command()
 def greetAll():
@@ -79,16 +79,35 @@ def destroy():
     # os.system("sudo vnx -f pfinal.xml --show-map")
 
 @cli.command()
-def confbbdd():
+@click.pass_context
+def bbdd():
     """Config the BBDD as in the statment"""
 
 @cli.command()
-def confcluster():
+@click.pass_context
+def cluster():
     """Config gluster in nasX and in front servers"""
 
 @cli.command()
-def conffront():
+@click.pass_context
+def front():
     """Config the front servers"""
+
+@cli.command()
+@click.pass_context
+def fw(ctx):
+    """Config the FW as in the statment"""
+    logger.info("[1/7] Configuring firewall")
+
+    question = raw_input("If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        # click.echo(question[0])
+        question = input("If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+        ctx.invoke(destroy)
+    else:
+        ctx.invoke(greet)
 
 @cli.command()
 def greet():
@@ -141,9 +160,3 @@ def chain(ctx):
     """Test chain"""
     ctx.invoke(greet)
     test()
-
-@click.pass_context
-def start(ctx):
-    """Test chain"""
-    ctx.invoke(up)
-    ctx.invoke(bye)
