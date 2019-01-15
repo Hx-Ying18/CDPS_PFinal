@@ -14,7 +14,6 @@ logger = logging.getLogger('pfinalp2')
 def cli():
     pass
 
-
 @cli.command()
 def setupvnx():
     """Download the vnx xml of pfinal"""
@@ -36,7 +35,7 @@ def up():
     # os.system("sudo vnx -f pfinal.xml --show-map")
 
 @cli.command()
-def greet():
+def greetAll():
     """Create & show Hello.text in s1,s2,s3,lb,bbdd,nas1,nas2 & nas3"""
 
     for i in [1,2,3]:
@@ -81,6 +80,31 @@ def conffront():
     """Config the front servers"""
 
 @cli.command()
-def continueTest():
+def greet():
+    """Say hello in your machine"""
+    click.echo("Hi")
+
+@cli.command()
+def bye():
+    """Say bye in your machine"""
+    click.echo("Bye")
+
+@cli.command()
+def test():
     """Test questions"""
-    click.echo("Hi man")
+    greet()
+    question = raw_input("If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        click.echo(question[0])
+        question = input("If there are no errors, may continue? (y/n)")
+    if question != "y":
+        bye()
+    else:
+       greet()
+
+@cli.command()
+@click.pass_context
+def chain(ctx):
+    """Test chain"""
+    ctx.invoke(greet)
+    ctx.invoke(bye)
