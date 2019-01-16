@@ -163,15 +163,19 @@ def cluster(ctx):
 @click.pass_context
 def front():
     """Config the front servers"""
-    logger.info("(0/3) each seond creating in each server in /mnt/nas a file with the date")
-    while true:
+
 
 
 @cli.command()
-@click.pass_context
 def testCluster():
     """Cluster replicating?"""
-
+    logger.info("(0/3) periodically creating in each server in /mnt/nas a file with the date")
+    os.system("sudo lxc-attach --clear-env -n s1 -- bash -c \"echo 'hello' > /mnt/nas/3.txt \"")
+    logger.debug("S1")
+    os.system('sudo lxc-attach --clear-env -n s1 -- tree /mnt/nas')
+    for i in range(3):
+        logger.debug("nas"+str(i+1))
+        os.system('sudo lxc-attach --clear-env -n nas'+ str(i+1) +' -- tree /nas')
 
 
 @cli.command()
