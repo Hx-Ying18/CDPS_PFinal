@@ -125,9 +125,7 @@ def cluster(ctx):
     logger.info("[3/7] (0/4) Configuring the IPs in Nas ")
     for i in range(3):
         os.system('sudo cp ../configClusterInNas.sh /var/lib/lxc/nas'+str(i+1)+'/rootfs/root')
-
-    for i in range(3):
-        os.system('sudo lxc-attach --clear-env -n nas'+str(i+1)+' -- /root/configClusterInNas.sh')
+        os.system('sudo lxc-attach --clear-env -n nas' + str(i + 1) + ' -- /root/configClusterInNas.sh')
 
     logger.info("[3/7] (1/4) setting the sync in the servers")
     os.system("sudo lxc-attach --clear-env -n nas1 -- gluster peer probe nas2")
@@ -176,8 +174,72 @@ def cluster(ctx):
 
 @cli.command()
 @click.pass_context
-def front():
+def front(ctx):
     """Config the front servers"""
+    logger.info("[4/7] (0/5) Configuring servers")
+    logger.info("1. Install node and npm in the three servers ")
+    logger.info("2. Clone the github repo")
+    logger.info("3. Config it and check")
+    logger.info("4. Make uploads in the nas ")
+    logger.info("5. Check thru linx it can be get to the three servers")
+
+    logger.info("(0/5) Install node and npm in the three servers ")
+    ctx.invoke(installNpmNode)
+
+    logger.info("(1/5) Clone the github repo")
+    ctx.invoke(clone)
+
+    logger.info("(2/5) Config and check")
+    ctx.invoke(config)
+
+    logger.info("(3/5). Make uploads in the nas ")
+
+    logger.info("(4/5). Check thru linx it can be get to the three servers")
+
+    logger.info("(5/5). Done")
+
+
+@cli.command()
+def installNpmNode():
+    """Install npm and nodejs"""
+    for i in range(3):
+        os.system('sudo lxc-attach --clear-env -n s'+str(i+1)+' -- sudo apt update')
+        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- sudo apt -y install nodejs npm')
+        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- sudo apt -y install npm')
+
+        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- nodejs --version')
+        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- npm --version')
+
+@cli.command()
+def clone():
+    """Clone"""
+    for i in range(3):
+        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- git clone https://github.com/CORE-UPM/quiz_2019.git')
+        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- mv /quiz_2019 root/')
+
+@cli.command()
+def config():
+    """Config"""
+
+    os.system('sudo cp ../deployServer.sh /var/lib/lxc/s1/rootfs/root')
+    os.system('sudo lxc-attach --clear-env -n s1 -- ./root/deployServer.sh')
+
+    # for i in range(3):
+    #     os.system('sudo cp ../deployServer.sh /var/lib/lxc/s'+str(i+1)+'/rootfs/root')
+    #     os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- ./root/deployServer.sh')
+    #
+    # os.system('sudo cp ../migrateSeed.sh /var/lib/lxc/s1/rootfs/root')
+    # os.system('sudo lxc-attach --clear-env -n s1 -- /root/migrateSeed.sh')
+
+    # for i in range(3):
+    #     os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- ./node_modules/forever/bin/forever/bin/forever start ./bin/www')
+
+@cli.command()
+def lynx():
+    """lynx"""
+    for i in range(3):
+        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- lynx http://20.2.3.11:3000')
+
 
 @cli.command()
 @click.pass_context
@@ -259,7 +321,7 @@ def fw(ctx):
         ctx.invoke(bye)
         ctx.invoke(destroy)
     else:
-        ctx.invoke(greet)
+        ctx.invoke(bbdd)
 
 @cli.command()
 @click.pass_context
