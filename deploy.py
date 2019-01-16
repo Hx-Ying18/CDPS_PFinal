@@ -147,17 +147,32 @@ def cluster(ctx):
         os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- mkdir /mnt/nas')
         os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- mount -t glusterfs 20.2.4.21:/nas /mnt/nas')
 
-    logger.info("[4/7] cluster configured")
+    logger.info("[3/7] cluster configured?")
 
-    question = raw_input("If no errors, may continue? (y/n)")
+    question = raw_input("If no errors, let's testing? (y/n)")
     while question.lower() not in ("y", "n"):
         # click.echo(question[0])
-        question = input("If there are no errors, may continue? (y/n)")
+        question = input("If there are no errors, let's testing? (y/n)")
     if question != "y":
         ctx.invoke(bye)
         ctx.invoke(destroy)
     else:
-        ctx.invoke(greet)
+        ctx.invoke(deletetc)
+        logger.debug("[3/7] Cluster test {0/5} starting")
+        ctx.invoke(tcluster)
+        logger.debug("[3/7] Cluster test {1/5} down nas 3")
+        ctx.invoke(downnas3)
+        logger.debug("[3/7] Cluster test {2/5} no in nas 3")
+        ctx.invoke(tcluster)
+        logger.debug("[3/7] Cluster test {3/5} check there is nothing in nas3 ")
+        ctx.invoke(upnas3)
+        ctx.invoke(shownas3)
+        logger.debug("[4/7] Cluster test {4/5} check there are files in nas 3 after up")
+        ctx.invoke(deletetc)
+        logger.debug("[3/7] Cluster test {5/5} ")
+        ctx.invoke(front)
+
+
 
 @cli.command()
 @click.pass_context
@@ -165,22 +180,23 @@ def front():
     """Config the front servers"""
 
 @cli.command()
-def tcluster():
+@click.pass_context
+def tcluster(ctx):
     """Cluster replicating?"""
-    logger.info("Create in each server a file in /mnt/nas a")
+    logger.info("=> Testing replication of cluster: each server a file in /mnt/nas ")
 
-    logger.debug("No files in nas")
+    logger.debug("[3/7] (0/3) No files in nas")
     for k in range(3):
          os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm -r -- /mnt/nas/testCluster")
 
     for k in range(3):
-        logger.debug("("+str(k)+"/3)No files in nas"+ str(k+1))
+        logger.debug("(0/3) "+str(k+1)+"/3 No files in nas"+ str(k+1))
         # os.system('sudo lxc-attach --clear-env -n s' + str(k + 1) + ' -- chmod 777 /mnt/nas/*')
         os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- tree /mnt/nas")
         os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- ls -l /mnt/nas")
         # os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm /mnt/nas/*")
 
-    logger.debug("Creating files")
+    logger.debug("(1/3) Creating files")
 
     os.system('sudo lxc-attach --clear-env -n s1 -- mkdir /mnt/nas/testCluster')
 
@@ -189,7 +205,7 @@ def tcluster():
             os.system("sudo lxc-attach --clear-env -n s"+ str(k+1)+ " -- bash -c \"echo 'hello' > /mnt/nas/testCluster/S"+str(k+1)+"_"+ str(j) +" \"")
             # os.system('sudo lxc-attach --clear-env -n s' + str(k + 1) + ' -- chmod 777 /mnt/nas/*')
 
-    logger.debug("Show the files")
+    logger.debug("(2/3) Show the files")
     for k in range(3):
         logger.debug("S" + str(k+1))
         os.system('sudo lxc-attach --clear-env -n s' + str(k + 1) + ' -- tree /mnt/nas/testCluster')
@@ -202,6 +218,21 @@ def tcluster():
     #     os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- cd /mnt/nas")
     #     os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- ls")
     #     os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm /mnt/nas/*")
+
+    logger.debug("It should not be any files in nas, and files in the nas if it's the fisrt command run")
+    logger.debug("And no files in the nas3 if it is the second run")
+    question = raw_input("Check the replication. If no errors, may continue? (y/n)")
+
+    while question.lower() not in ("y", "n"):
+        # click.echo(question[0])
+        question = input("Check the replication. If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+        ctx.invoke(deletetc)
+        ctx.invoke(destroy)
+    else:
+        logger.debug("(3/3) Test done")
+
 
 @cli.command()
 def downnas3():
@@ -231,13 +262,18 @@ def fw(ctx):
         ctx.invoke(greet)
 
 @cli.command()
-def greet():
+@click.pass_context
+def greet(ctx):
     """Say hello in your machine"""
     click.echo("Hi")
+    ctx.invoke(bye)
+    ctx.invoke(hi)
+
     # for i in range(3):
     #     hi()
     # test()
 
+@cli.command()
 def hi():
     click.echo("Hi!!!")
 
@@ -249,7 +285,18 @@ def bye():
 @cli.command()
 def shownas3():
     """Show nas 3"""
+    logger.debug("Check after up there are files in nas3")
     os.system('sudo lxc-attach --clear-env -n nas3 -- tree /nas/testCluster')
+    question = raw_input("If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        # click.echo(question[0])
+        question = input("If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+        ctx.invoke(deletetc)
+        ctx.invoke(destroy)
+    else:
+        logger.debug("=> Cluster test done")
 
 @cli.command()
 def deletetc():
