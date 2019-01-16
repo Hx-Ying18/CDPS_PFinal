@@ -122,24 +122,30 @@ def cluster(ctx):
     logger.info("[3/7] Configuring storage cluster for images  ")
     os.system('chmod 777 ../configClusterInNas.sh')
 
-    logger.info("Configuring the IPs in Nas ")
+    logger.info("[3/7] (0/4) Configuring the IPs in Nas ")
     for i in range(3):
         os.system('sudo cp ../configClusterInNas.sh /var/lib/lxc/nas'+str(i+1)+'/rootfs/root')
 
     for i in range(3):
         os.system('sudo lxc-attach --clear-env -n nas'+str(i+1)+' -- /root/configClusterInNas.sh')
 
+    logger.info("[3/7] (1/4) setting the sync in the servers")
     os.system("sudo lxc-attach --clear-env -n nas1 -- gluster peer probe nas2")
     os.system("sudo lxc-attach --clear-env -n nas1 -- gluster peer probe nas3")
     os.system("sudo lxc-attach --clear-env -n nas1 -- gluster peer status")
     os.system("sudo lxc-attach --clear-env -n nas1 -- gluster volume create nas replica 3 nas1:/nas nas2:/nas nas3:/nas force")
-
     os.system("sudo lxc-attach --clear-env -n nas1 -- gluster volume start nas")
 
+    logger.info("[3/7] (2/4) reducing the time to answer in the nas")
     for i in range(3):
         os.system('sudo lxc-attach --clear-env -n nas'+str(i+1)+' -- gluster volume set nas network.ping-timeout 5')
 
     os.system("sudo lxc-attach --clear-env -n nas1 -- gluster volume info")
+
+    logger.info("[3/7] (3/4) mount the nas in servers")
+    for i in range(3):
+        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- mkdir /mnt/nas')
+        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- mount -t glusterfs 20.2.4.21:/nas /mnt/nas')
 
     logger.info("[4/7] cluster configured")
 
@@ -157,13 +163,23 @@ def cluster(ctx):
 @click.pass_context
 def front():
     """Config the front servers"""
+    logger.info("(0/3) each seond creating in each server in /mnt/nas a file with the date")
+    while true:
+
+
+@cli.command()
+@click.pass_context
+def testCluster():
+    """Cluster replicating?"""
+
+
 
 @cli.command()
 @click.pass_context
 def fw(ctx):
     """FW only allows access through ping and to the port 80 of the lb"""
     logger.info("[1/7] Configuring firewall")
-    call('sudo lxc-attach --clear-env -n fw -- /root/fw.fw', shell=True)
+    # call('sudo lxc-attach --clear-env -n fw -- /root/fw.fw', shell=True)
     logger.info("[2/7] Configured firewall")
     question = raw_input("If no errors, may continue? (y/n)")
     while question.lower() not in ("y", "n"):

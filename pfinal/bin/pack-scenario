@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SCENARIO=pfinal.xml
+#VERS='013'
+
+# Move to the upper directory where this script is
+cdir=$( dirname $0 )
+cd $cdir/..
+
+vnx --pack $SCENARIO \
+    --pack-add-files bin s4.xml\
+    $1 $2 $3
+
