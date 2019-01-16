@@ -145,7 +145,7 @@ def cluster(ctx):
     logger.info("[3/7] (3/4) mount the nas in servers")
     for i in range(3):
         os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- mkdir /mnt/nas')
-        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- mount -t glusterfs 20.2.4.2'+str(i+1)+':/nas /mnt/nas')
+        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- mount -t glusterfs 20.2.4.21:/nas /mnt/nas')
 
     logger.info("[4/7] cluster configured")
 
@@ -167,7 +167,7 @@ def front():
 @cli.command()
 def tcluster():
     """Cluster replicating?"""
-    logger.info("Periodically creating in each server in /mnt/nas a file with the date")
+    logger.info("Create in each server a file in /mnt/nas a")
 
     logger.debug("No files in nas")
     for k in range(3):
@@ -177,6 +177,7 @@ def tcluster():
         logger.debug("("+str(k)+"/3)No files in nas"+ str(k+1))
         # os.system('sudo lxc-attach --clear-env -n s' + str(k + 1) + ' -- chmod 777 /mnt/nas/*')
         os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- tree /mnt/nas")
+        os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- ls -l /mnt/nas")
         # os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm /mnt/nas/*")
 
     logger.debug("Creating files")
@@ -203,9 +204,14 @@ def tcluster():
     #     os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm /mnt/nas/*")
 
 @cli.command()
-def tcnas1down():
+def downnas3():
     """Cluster replicating?"""
-    os.system('sudo lxc-attach --clear-env -n nas1 -- ifconfig eth1 down')
+    os.system('sudo lxc-attach --clear-env -n nas3 -- ifconfig eth1 down')
+
+@cli.command()
+def upnas3():
+    """Cluster replicating?"""
+    os.system('sudo lxc-attach --clear-env -n nas3 -- ifconfig eth1 up')
 
 @cli.command()
 @click.pass_context
@@ -239,6 +245,19 @@ def hi():
 def bye():
     """Say bye in your machine"""
     click.echo("Bye")
+
+@cli.command()
+def shownas3():
+    """Show nas 3"""
+    os.system('sudo lxc-attach --clear-env -n nas3 -- tree /nas/testCluster')
+
+@cli.command()
+def deletetc():
+    """Delete test cluster"""
+    os.system('sudo lxc-attach --clear-env -n nas3 -- tree /nas/testCluster')
+    for k in range(3):
+         os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm -r -- /mnt/nas/testCluster")
+    os.system('sudo lxc-attach --clear-env -n nas3 -- tree /nas/testCluster')
 
 @cli.command()
 @click.pass_context
