@@ -145,7 +145,7 @@ def cluster(ctx):
     logger.info("[3/7] (3/4) mount the nas in servers")
     for i in range(3):
         os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- mkdir /mnt/nas')
-        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- mount -t glusterfs 20.2.4.21:/nas /mnt/nas')
+        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- mount -t glusterfs 20.2.4.2'+str(i+1)+':/nas /mnt/nas')
 
     logger.info("[4/7] cluster configured")
 
@@ -164,19 +164,48 @@ def cluster(ctx):
 def front():
     """Config the front servers"""
 
+@cli.command()
+def tcluster():
+    """Cluster replicating?"""
+    logger.info("Periodically creating in each server in /mnt/nas a file with the date")
 
+    logger.debug("No files in nas")
+    for k in range(3):
+         os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm -r -- /mnt/nas/testCluster")
+
+    for k in range(3):
+        logger.debug("("+str(k)+"/3)No files in nas"+ str(k+1))
+        # os.system('sudo lxc-attach --clear-env -n s' + str(k + 1) + ' -- chmod 777 /mnt/nas/*')
+        os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- tree /mnt/nas")
+        # os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm /mnt/nas/*")
+
+    logger.debug("Creating files")
+
+    os.system('sudo lxc-attach --clear-env -n s1 -- mkdir /mnt/nas/testCluster')
+
+    for k in range(3):
+        for j in range(1):
+            os.system("sudo lxc-attach --clear-env -n s"+ str(k+1)+ " -- bash -c \"echo 'hello' > /mnt/nas/testCluster/S"+str(k+1)+"_"+ str(j) +" \"")
+            # os.system('sudo lxc-attach --clear-env -n s' + str(k + 1) + ' -- chmod 777 /mnt/nas/*')
+
+    logger.debug("Show the files")
+    for k in range(3):
+        logger.debug("S" + str(k+1))
+        os.system('sudo lxc-attach --clear-env -n s' + str(k + 1) + ' -- tree /mnt/nas/testCluster')
+    for i in range(3):
+        logger.debug("nas" + str(i + 1))
+        os.system('sudo lxc-attach --clear-env -n nas' + str(i + 1) + ' -- tree /nas/testCluster')
+
+    #for k in range(3):
+    # os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- ls -l /mnt/nas")
+    #     os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- cd /mnt/nas")
+    #     os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- ls")
+    #     os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm /mnt/nas/*")
 
 @cli.command()
-def testCluster():
+def tcnas1down():
     """Cluster replicating?"""
-    logger.info("(0/3) periodically creating in each server in /mnt/nas a file with the date")
-    os.system("sudo lxc-attach --clear-env -n s1 -- bash -c \"echo 'hello' > /mnt/nas/3.txt \"")
-    logger.debug("S1")
-    os.system('sudo lxc-attach --clear-env -n s1 -- tree /mnt/nas')
-    for i in range(3):
-        logger.debug("nas"+str(i+1))
-        os.system('sudo lxc-attach --clear-env -n nas'+ str(i+1) +' -- tree /nas')
-
+    os.system('sudo lxc-attach --clear-env -n nas1 -- ifconfig eth1 down')
 
 @cli.command()
 @click.pass_context
