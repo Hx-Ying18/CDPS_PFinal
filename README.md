@@ -27,7 +27,7 @@ Specific commands info:
 deploy --help
 ```
 
-For quicly deploymente:
+For fast deployment:
 ```bash
 yes | deploy up 
 ```
