@@ -198,13 +198,13 @@ def front(ctx):
 
     logger.info("(2/5) Config and check")
     ctx.invoke(config)
-    ctx.invoke(run)
+    #ctx.invoke(run)
 
     logger.info("(3/5). Make uploads in the nas ")
-    ctx.invoke(link)
+    #ctx.invoke(link)
 
     logger.info("(4/5). Check thru linx it can be get to the three servers")
-    #ctx.invoke(lynx)
+    # ctx.invoke(lynx) if doping this with yes | trigger stuck
 
     logger.info("(5/5). Done")
 
@@ -214,7 +214,13 @@ def installNpmNode():
     """Install npm and nodejs"""
     for i in range(3):
         os.system('sudo lxc-attach --clear-env -n s'+str(i+1)+' -- sudo apt update')
-        os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- sudo apt -y install nodejs npm')
+
+        # Deprectaed, due to an error when migrating
+        # os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- sudo apt -y install nodejs npm')
+
+        os.system("curl -sL https://deb.nodesource.com/setup_9.x | sudo bash -")
+        os.system("sudo apt-get install nodejs")
+
         os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- sudo apt -y install npm')
 
         os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- nodejs --version')
@@ -245,8 +251,9 @@ def config():
 @cli.command()
 def run():
     """Run service"""
+    os.system("sudo lxc-attach --clear-env -n s1 -- pwd")
     os.system(
-        "sudo lxc-attach --clear-env -n s1 -- bash -c \" cd /root/quiz_2019; export QUIZ_OPEN_REGISTER=yes; export DATABASE_URL=mysql://quiz:xxxx@20.2.4.31:3306/quiz; npm run-script migrate_cdps ; npm run-script seed_cdps; ./node_modules/forever/bin/forever start ./bin/www \"")
+        "sudo lxc-attach --clear-env -n s1 -- bash -c \"cd /root/quiz_2019; export QUIZ_OPEN_REGISTER=yes; export DATABASE_URL=mysql://quiz:xxxx@20.2.4.31:3306/quiz; npm run-script migrate_cdps ; npm run-script seed_cdps; ./node_modules/forever/bin/forever start ./bin/www \"")
     os.system(
         "sudo lxc-attach --clear-env -n s2 -- bash -c \" cd /root/quiz_2019; export QUIZ_OPEN_REGISTER=yes; export DATABASE_URL=mysql://quiz:xxxx@20.2.4.31:3306/quiz; ./node_modules/forever/bin/forever start ./bin/www \"")
     os.system(
@@ -258,6 +265,59 @@ def link():
     """Link upload with nas"""
     os.system('sudo cp ../link.sh /var/lib/lxc/s1/rootfs/root')
     os.system('sudo lxc-attach --clear-env -n s1 -- ./root/link.sh')
+    for k in range(3):
+        os.system('sudo cp ../link.sh /var/lib/lxc/s'+str(k+1)+'/rootfs/root')
+        os.system('sudo lxc-attach --clear-env -n s'+str(k+1)+' -- ./root/link.sh')
+
+
+@cli.command()
+@click.pass_context
+def tlink(ctx):
+    """Cluster replicating?"""
+    logger.info("=> Testing replication of cluster: each server a file in /root/quiz_2019/public/uploads ")
+
+    logger.debug("[3/7] (0/3) No files in nas")
+    for k in range(3):
+         os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- tree /root/quiz_2019/public/uploads/nas ")
+
+    for k in range(3):
+        logger.debug("(0/3) "+str(k+1)+"/3 No files in nas"+ str(k+1))
+        # os.system('sudo lxc-attach --clear-env -n s' + str(k + 1) + ' -- chmod 777 /mnt/nas/*')
+        os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- tree /root/quiz_2019/public/uploads ")
+        os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- ls -l /root/quiz_2019/public/uploads ")
+        # os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm /mnt/nas/*")
+
+    logger.debug("(1/3) Creating files")
+
+    for k in range(3):
+        os.system("sudo lxc-attach --clear-env -n s"+ str(k+1)+ " -- bash -c \"echo 'hello' > /root/quiz_2019/public/uploads/nas/S"+str(k+1))
+            # os.system('sudo lxc-attach --clear-env -n s' + str(k + 1) + ' -- chmod 777 /mnt/nas/*')
+
+    logger.debug("(2/3) Show the files")
+    for k in range(3):
+        logger.debug("S" + str(k+1))
+        os.system('sudo lxc-attach --clear-env -n s' + str(k + 1) + ' -- tree /root/quiz_2019/public/uploads/nas')
+    for i in range(3):
+        logger.debug("nas" + str(i + 1))
+        os.system('sudo lxc-attach --clear-env -n nas' + str(i + 1) + ' -- tree /nas')
+
+    #for k in range(3):
+    # os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- ls -l /mnt/nas")
+    #     os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- cd /mnt/nas")
+    #     os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- ls")
+    #     os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm /mnt/nas/*")
+
+    question = raw_input("Check the replication. If no errors, may continue? (y/n)")
+
+    while question.lower() not in ("y", "n"):
+        # click.echo(question[0])
+        question = input("Check the replication. If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+        ctx.invoke(destroy)
+    else:
+        logger.debug("(3/3) Test done")
+
 
 @cli.command()
 def lynx():
@@ -273,7 +333,16 @@ def lynx():
 @click.pass_context
 def lb(ctx):
     """Installs haproxy"""
+    logger.info("[5/7] Haproxy")
+    os.system('sudo lxc-attach --clear-env -n lb -- sudo apt update')
+    os.system('sudo lxc-attach --clear-env -n lb -- sudo apt install -y haproxy')
+    os.system('sudo lxc-attach --clear-env -n lb -- haproxy -v')
+
+    logger.info("Move the haproxy.cfg into the lb")
+    os.system('sudo cp ../haproxy.cfg /var/lib/lxc/s1/rootfs/root')
     os.system('sudo lxc-attach --clear-env -n s1 -- ./root/link.sh')
+
+
 
 
 
