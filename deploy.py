@@ -203,8 +203,15 @@ def front(ctx):
     logger.info("(3/5). Make uploads in the nas ")
     #ctx.invoke(link)
 
-    logger.info("(4/5). Check thru linx it can be get to the three servers")
+    logger.info("(4/5). Do prerouting to the port 3000, from 80")
     # ctx.invoke(lynx) if doping this with yes | trigger stuck
+
+    os.system(
+        "sudo lxc-attach --clear-env -n s1 -- sudo iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j REDIRECT --to-port 3000")
+    os.system(
+        "sudo lxc-attach --clear-env -n s2 -- sudo iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j REDIRECT --to-port 3000")
+    os.system(
+        "sudo lxc-attach --clear-env -n s3 -- sudo iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j REDIRECT --to-port 3000")
 
     logger.info("(5/5). Done")
 
