@@ -17,6 +17,8 @@ deploy setupvnx
 
 In the directory /pfinal
 ```bash
+. venv/bin/activate
+cd /pfinal
 deploy up # Complete deployment, followed by questions.
 deploy destroy # Destroy the arquitecture.
 deploy restart # Restart the arquitecture.
