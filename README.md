@@ -10,7 +10,6 @@ Install click and activate the venv; the command will work on the directory pfin
 python3 installClick.py
 . venv/bin/activate
 cd /pfinal
-deploy setupvnx
 ```
 
 ## Usage
