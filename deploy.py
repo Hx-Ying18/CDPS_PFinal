@@ -419,7 +419,9 @@ def upnas3():
 def fw(ctx):
     """FW only allows access through ping and to the port 80 of the lb"""
     logger.info("[1/7] Configuring firewall")
-    # call('sudo lxc-attach --clear-env -n fw -- /root/fw.fw', shell=True)
+    os.system('sudo cp ../fw.fw /var/lib/lxc/fw/rootfs/root')
+    os.system('sudo lxc-attach --clear-env -n fw -- chmod 777 /root/fw.fw')
+    os.system('sudo lxc-attach --clear-env -n fw -- sh /root/fw.fw')
     logger.info("[2/7] Configured firewall")
     question = raw_input("If no errors, may continue? (y/n)")
     while question.lower() not in ("y", "n"):
@@ -429,7 +431,24 @@ def fw(ctx):
         ctx.invoke(bye)
         ctx.invoke(destroy)
     else:
+        ctx.invoke(tfw)
+
+@cli.command()
+@click.pass_context
+def tfw(ctx):
+    """FW only allows access through ping and to the port 80 of the lb"""
+    logger.info("Testing firewall")
+    os.system('sudo lxc-attach --clear-env -n c1 -- nmap -F 20.2.1.1')
+    question = raw_input("If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        # click.echo(question[0])
+        question = input("If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+        ctx.invoke(destroy)
+    else:
         ctx.invoke(bbdd)
+
 
 @cli.command()
 @click.pass_context
