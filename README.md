@@ -17,7 +17,7 @@ deploy setupvnx
 
 In the directory /pfinal
 ```bash
-deploy up # Complete deploy, followed by questions.
+deploy up # Complete deployment, followed by questions.
 deploy destroy # Destroy the arquitecture.
 deploy restart # Restart the arquitecture.
 
