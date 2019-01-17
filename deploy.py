@@ -198,7 +198,7 @@ def front(ctx):
 
     logger.info("(2/5) Config and check")
     ctx.invoke(config)
-    #ctx.invoke(run)
+    ctx.invoke(run)
 
     logger.info("(3/5). Make uploads in the nas ")
     #ctx.invoke(link)
@@ -322,12 +322,8 @@ def tlink(ctx):
 @cli.command()
 def lynx():
     """Lynx"""
-
     for i in range(3):
         os.system('sudo lxc-attach --clear-env -n s' + str(i + 1) + ' -- lynx -term=vt100 http://20.2.3.11:3000')
-
-
-
 
 @cli.command()
 @click.pass_context
@@ -340,12 +336,18 @@ def lb(ctx):
 
     logger.info("Move the haproxy.cfg into the lb")
     os.system('sudo cp ../haproxy.cfg /var/lib/lxc/s1/rootfs/root')
-    os.system('sudo lxc-attach --clear-env -n s1 -- ./root/link.sh')
+    os.system('sudo lxc-attach --clear-env -n s1 -- mv /root/haproxy.cfg /etc/haproxy/haproxy.cfg')
+
+    logger.info("Restart haproxy")
+    os.system('sudo lxc-attach --clear-env -n lb -- sudo service haproxy restart')
 
 
-
-
-
+@cli.command()
+@click.pass_context
+def tlb(ctx):
+    """Installs haproxy"""
+    logger.info("Test Haproxy")
+    os.system("sudo lxc-attach --clear-env -n fw -- while true; do curl;sleep 0.1; done; ")
 
 @cli.command()
 @click.pass_context
