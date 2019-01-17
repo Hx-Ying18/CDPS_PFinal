@@ -10,6 +10,7 @@ Install click and activate the venv; the command will work on the directory /pfi
 python3 installClick.py
 . venv/bin/activate
 cd /pfinal
+deploy setupvnx
 ```
 
 ## Usage
@@ -17,6 +18,9 @@ cd /pfinal
 In the directory /pfinal
 ```bash
 deploy up # Complete deploy, followed by questions.
+deploy destroy # Destroy the arquitecture.
+deploy restart # Restart the arquitecture.
+
 ```
 If type (y) it will be continue, if no the system will be destroy.
 In this way, through atomic operations is achieved the idempotent deploy.
