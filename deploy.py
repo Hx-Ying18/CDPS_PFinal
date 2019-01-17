@@ -335,8 +335,8 @@ def lb(ctx):
     os.system('sudo lxc-attach --clear-env -n lb -- haproxy -v')
 
     logger.info("Move the haproxy.cfg into the lb")
-    os.system('sudo cp ../haproxy.cfg /var/lib/lxc/s1/rootfs/root')
-    os.system('sudo lxc-attach --clear-env -n s1 -- mv /root/haproxy.cfg /etc/haproxy/haproxy.cfg')
+    os.system('sudo cp ../haproxy.cfg /var/lib/lxc/lb/rootfs/root')
+    os.system('sudo lxc-attach --clear-env -n lb -- mv /root/haproxy.cfg /etc/haproxy/haproxy.cfg')
 
     logger.info("Restart haproxy")
     os.system('sudo lxc-attach --clear-env -n lb -- sudo service haproxy restart')
