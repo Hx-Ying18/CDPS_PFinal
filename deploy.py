@@ -44,7 +44,7 @@ def up(ctx):
         ctx.invoke(bye)
         ctx.invoke(destroy)
     else:
-        ctx.invoke(bbdd)
+        ctx.invoke(greet)
 
 @cli.command()
 def greetAll():
@@ -366,7 +366,7 @@ def lb(ctx):
         ctx.invoke(bye)
         ctx.invoke(destroy)
     else:
-       ctx.invoke(greet)
+       ctx.invoke(fw)
 
 
 @cli.command()
@@ -455,13 +455,13 @@ def fw(ctx):
 
     logger.info("[2/7] Configured firewall")
 
-    cmd_line = "sudo lxc-attach --clear-env -n c1 -- nmap -F 20.2.3.11"
+    cmd_line = "sudo lxc-attach --clear-env -n c1 -- nmap -F 20.2.2.2"
     call(cmd_line, shell=True)
 
     cmd_line = "sudo lxc-attach --clear-env -n fw -- /root/fw.fw"
     call(cmd_line, shell=True)
 
-    cmd_line = "sudo lxc-attach --clear-env -n c1 -- nmap -F 20.2.3.11"
+    cmd_line = "sudo lxc-attach --clear-env -n c1 -- nmap -F 20.2.2.2"
     call(cmd_line, shell=True)
 
     question = raw_input("If no errors, may continue? (y/n)")
@@ -472,7 +472,7 @@ def fw(ctx):
         ctx.invoke(bye)
         ctx.invoke(destroy)
     else:
-        ctx.invoke(tfw)
+        logger.info("Configured")
 
 @cli.command()
 @click.pass_context
