@@ -366,7 +366,7 @@ def lb(ctx):
         ctx.invoke(bye)
         ctx.invoke(destroy)
     else:
-       ctx.invoke(fw)
+       ctx.invoke(greet)
 
 
 @cli.command()
@@ -446,10 +446,24 @@ def upnas3():
 def fw(ctx):
     """FW only allows access through ping and to the port 80 of the lb"""
     logger.info("[1/7] Configuring firewall")
-    os.system('sudo cp ../fw.fw /var/lib/lxc/fw/rootfs/root')
+    # os.system('sudo cp ../fw.fw /var/lib/lxc/fw/rootfs/root')
     # os.system('sudo lxc-attach --clear-env -n fw -- chmod 777 /root/fw.fw')
-    os.system('sudo lxc-attach --clear-env -n fw -- sh /root/fw.fw')
+    # os.system('sudo lxc-attach --clear-env -n fw -- sh /root/fw.fw')
+
+    cmd_line = "sudo cp ../fw.fw /var/lib/lxc/fw/rootfs/root"
+    call(cmd_line, shell=True)
+
     logger.info("[2/7] Configured firewall")
+
+    cmd_line = "sudo lxc-attach --clear-env -n c1 -- nmap -F 20.2.3.11"
+    call(cmd_line, shell=True)
+
+    cmd_line = "sudo lxc-attach --clear-env -n fw -- /root/fw.fw"
+    call(cmd_line, shell=True)
+
+    cmd_line = "sudo lxc-attach --clear-env -n c1 -- nmap -F 20.2.3.11"
+    call(cmd_line, shell=True)
+
     question = raw_input("If no errors, may continue? (y/n)")
     while question.lower() not in ("y", "n"):
         # click.echo(question[0])
