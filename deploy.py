@@ -44,7 +44,7 @@ def up(ctx):
         ctx.invoke(bye)
         ctx.invoke(destroy)
     else:
-        ctx.invoke(fw)
+        ctx.invoke(bbdd)
 
 @cli.command()
 def greetAll():
@@ -325,7 +325,6 @@ def tlink(ctx):
     #     os.system("sudo lxc-attach --clear-env -n s" + str(k + 1) + " -- rm /mnt/nas/*")
 
     question = raw_input("Check the replication. If no errors, may continue? (y/n)")
-
     while question.lower() not in ("y", "n"):
         # click.echo(question[0])
         question = input("Check the replication. If there are no errors, may continue? (y/n)")
@@ -357,6 +356,17 @@ def lb(ctx):
 
     logger.info("Restart haproxy")
     os.system('sudo lxc-attach --clear-env -n lb -- sudo service haproxy restart')
+
+
+    question = raw_input("Check the replication. If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        # click.echo(question[0])
+        question = input("Check the replication. If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+        ctx.invoke(destroy)
+    else:
+       ctx.invoke(fw)
 
 
 @cli.command()
@@ -437,7 +447,7 @@ def fw(ctx):
     """FW only allows access through ping and to the port 80 of the lb"""
     logger.info("[1/7] Configuring firewall")
     os.system('sudo cp ../fw.fw /var/lib/lxc/fw/rootfs/root')
-    os.system('sudo lxc-attach --clear-env -n fw -- chmod 777 /root/fw.fw')
+    # os.system('sudo lxc-attach --clear-env -n fw -- chmod 777 /root/fw.fw')
     os.system('sudo lxc-attach --clear-env -n fw -- sh /root/fw.fw')
     logger.info("[2/7] Configured firewall")
     question = raw_input("If no errors, may continue? (y/n)")
@@ -464,7 +474,7 @@ def tfw(ctx):
         ctx.invoke(bye)
         ctx.invoke(destroy)
     else:
-        ctx.invoke(bbdd)
+        ctx.invoke(greet)
 
 
 @cli.command()
