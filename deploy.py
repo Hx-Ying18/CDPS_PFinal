@@ -29,22 +29,22 @@ def setupvnx():
 
 @cli.command()
 @click.pass_context
-def up(ctx):
+def start(ctx):
     """Create and boot the system """
 
     logger.debug("[0/7] Boot the system ")
     os.system("sudo vnx -f pfinal.xml --create")
     # os.system("sudo vnx -f pfinal.xml --show-map")
-    logger.debug("[1/7] System boot")
-    question = raw_input("If no errors, may continue? (y/n)")
-    while question.lower() not in ("y", "n"):
-        # click.echo(question[0])
-        question = input("If there are no errors, may continue? (y/n)")
-    if question != "y":
-        ctx.invoke(bye)
-        ctx.invoke(destroy)
-    else:
-        ctx.invoke(greet)
+    # logger.debug("[1/7] System boot")
+    # question = raw_input("If no errors, may continue? (y/n)")
+    # while question.lower() not in ("y", "n"):
+    #     # click.echo(question[0])
+    #     question = input("If there are no errors, may continue? (y/n)")
+    # if question != "y":
+    #     ctx.invoke(bye)
+    #     ctx.invoke(destroy)
+    # else:
+    #     ctx.invoke(greet)
 
 @cli.command()
 def greetAll():
@@ -110,15 +110,15 @@ def bbdd(ctx):
 
     logger.info("[3/7] BBDD configured")
 
-    question = raw_input("If no errors, may continue? (y/n)")
-    while question.lower() not in ("y", "n"):
-        # click.echo(question[0])
-        question = input("If there are no errors, may continue? (y/n)")
-    if question != "y":
-        ctx.invoke(bye)
-        ctx.invoke(destroy)
-    else:
-        ctx.invoke(cluster)
+    # question = raw_input("If no errors, may continue? (y/n)")
+    # while question.lower() not in ("y", "n"):
+    #     # click.echo(question[0])
+    #     question = input("If there are no errors, may continue? (y/n)")
+    # if question != "y":
+    #     ctx.invoke(bye)
+    #     ctx.invoke(destroy)
+    # else:
+    #     ctx.invoke(cluster)
 
 @cli.command()
 @click.pass_context
@@ -154,30 +154,47 @@ def cluster(ctx):
 
     logger.info("[3/7] cluster configured?")
 
-    question = raw_input("If no errors, let's continue or test? (y/n/t)")
-    while question.lower() not in ("y", "n", "t"):
-        # click.echo(question[0])
-        question = input("If there are no errors, let's continue or test? (y/n/t)")
-    if question == "n":
-        ctx.invoke(bye)
-        ctx.invoke(destroy)
-    if question == "y":
-        ctx.invoke(front)
-    else:
-        ctx.invoke(deletetc)
-        logger.debug("[3/7] Cluster test {0/5} starting")
-        ctx.invoke(tcluster)
-        logger.debug("[3/7] Cluster test {1/5} down nas 3")
-        ctx.invoke(downnas3)
-        logger.debug("[3/7] Cluster test {2/5} no in nas 3")
-        ctx.invoke(tcluster)
-        logger.debug("[3/7] Cluster test {3/5} check there is nothing in nas3 ")
-        ctx.invoke(upnas3)
-        ctx.invoke(shownas3)
-        logger.debug("[3/7] Cluster test {4/5} check there are files in nas 3 after up")
-        ctx.invoke(deletetc)
-        logger.debug("[4/7] Cluster test {5/5} ")
-        ctx.invoke(front)
+    # question = raw_input("If no errors, let's continue or test? (y/n/t)")
+    # while question.lower() not in ("y", "n", "t"):
+    #     # click.echo(question[0])
+    #     question = input("If there are no errors, let's continue or test? (y/n/t)")
+    # if question == "n":
+    #     ctx.invoke(bye)
+    #     ctx.invoke(destroy)
+    # if question == "y":
+    #     ctx.invoke(front)
+    # else:
+    #     # ctx.invoke(deletetc)
+    #     # logger.debug("[3/7] Cluster test {0/5} starting")
+    #     # ctx.invoke(tcluster)
+    #     # logger.debug("[3/7] Cluster test {1/5} down nas 3")
+    #     # ctx.invoke(downnas3)
+    #     # logger.debug("[3/7] Cluster test {2/5} no in nas 3")
+    #     # ctx.invoke(tcluster)
+    #     # logger.debug("[3/7] Cluster test {3/5} check there is nothing in nas3 ")
+    #     # ctx.invoke(upnas3)
+    #     # ctx.invoke(shownas3)
+    #     # logger.debug("[3/7] Cluster test {4/5} check there are files in nas 3 after up")
+    #     # ctx.invoke(deletetc)
+    #     # logger.debug("[4/7] Cluster test {5/5} ")
+    #     # ctx.invoke(front)
+
+@cli.command()
+@click.pass_context
+def maxtcluster(ctx):
+    ctx.invoke(deletetc)
+    logger.debug("[3/7] Cluster test {0/5} starting")
+    ctx.invoke(tcluster)
+    logger.debug("[3/7] Cluster test {1/5} down nas 3")
+    ctx.invoke(downnas3)
+    logger.debug("[3/7] Cluster test {2/5} no in nas 3")
+    ctx.invoke(tcluster)
+    logger.debug("[3/7] Cluster test {3/5} check there is nothing in nas3 ")
+    ctx.invoke(upnas3)
+    ctx.invoke(shownas3)
+    logger.debug("[3/7] Cluster test {4/5} check there are files in nas 3 after up")
+    ctx.invoke(deletetc)
+    logger.debug("[4/7] Cluster test {5/5} ")
 
 @cli.command()
 @click.pass_context
@@ -214,15 +231,15 @@ def front(ctx):
         "sudo lxc-attach --clear-env -n s3 -- sudo iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j REDIRECT --to-port 3000")
 
     logger.info("(5/5). Done")
-    question = raw_input("If there are no errors, may continue? (y/n)")
-    while question.lower() not in ("y", "n"):
-        # click.echo(question[0])
-        question = raw_input("If there are no errors, may continue? (y/n)")
-    if question != "y":
-        ctx.invoke(bye)
-        ctx.invoke(destroy)
-    else:
-       ctx.invoke(lb)
+    # question = raw_input("If there are no errors, may continue? (y/n)")
+    # while question.lower() not in ("y", "n"):
+    #     # click.echo(question[0])
+    #     question = raw_input("If there are no errors, may continue? (y/n)")
+    # if question != "y":
+    #     ctx.invoke(bye)
+    #     ctx.invoke(destroy)
+    # else:
+    #    ctx.invoke(lb)
 
 
 
@@ -495,9 +512,12 @@ def tfw(ctx):
 @click.pass_context
 def greet(ctx):
     """Say hello in your machine"""
+    i = 0
     click.echo("Hi")
     ctx.invoke(bye)
     ctx.invoke(hi)
+    i += 1
+    click.echo(i)
 
     # for i in range(3):
     #     hi()
@@ -562,7 +582,6 @@ def test():
         ctx.invoke(greet)
 
 
-
 @cli.command()
 @click.pass_context
 def chainTC(ctx):
@@ -574,3 +593,59 @@ def chain(ctx):
     """Test chain"""
     ctx.invoke(greet)
     test()
+
+@cli.command()
+@click.pass_context
+def up(ctx):
+    """Deployment up and running"""
+    i = 0
+    logger.debug("=>{"+str(i)+"/7} Start the deployment")
+    ctx.invoke(start)
+    ctx.invoke(ask)
+    i += 1
+
+    logger.debug("=>{"+str(i)+"/7} Config the BBDD")
+    ctx.invoke(bbdd)
+    ctx.invoke(ask)
+    i += 1
+
+    logger.debug("=>{"+str(i)+"/7} Config the cluster")
+    ctx.invoke(cluster)
+    ctx.invoke(ask)
+    i += 1
+
+    logger.debug("=>{" + str(i) + "/7} Test the cluster")
+    ctx.invoke(maxtcluster)
+    ctx.invoke(ask)
+    i += 1
+
+    logger.debug("=>{" + str(i) + "/7} Config servers")
+    ctx.invoke(front)
+    ctx.invoke(ask)
+    i += 1
+
+    logger.debug("=>{" + str(i) + "/7} Config lb")
+    ctx.invoke(lb)
+    ctx.invoke(ask)
+    i += 1
+
+    logger.debug("=>{" + str(i) + "/7} Config lb")
+    ctx.invoke(fw)
+    ctx.invoke(ask)
+    i += 1
+
+    logger.debug("=>{" + str(i) + "/7} Up")
+
+@cli.command()
+@click.pass_context
+def ask(ctx):
+    """Ask to continue"""
+    question = raw_input("If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        click.echo(question[0])
+        question = input("If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+        ctx.invoke(destroy)
+    else:
+        logger.debug("Let's continue")
