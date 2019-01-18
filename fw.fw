@@ -353,8 +353,8 @@ script_body() {
     # 
     # Permite acceso al servidor web de s1
     $IPTABLES -N RULE_0
-    $IPTABLES -A OUTPUT -p tcp -m tcp  -d 20.2.3.11   --dport 80  -m conntrack --ctstate NEW  -j RULE_0
-    $IPTABLES -A FORWARD -p tcp -m tcp  -d 20.2.3.11   --dport 80  -m conntrack --ctstate NEW  -j RULE_0
+    $IPTABLES -A OUTPUT -p tcp -m tcp  -d 20.2.2.2   --dport 80  -m conntrack --ctstate NEW  -j RULE_0
+    $IPTABLES -A FORWARD -p tcp -m tcp  -d 20.2.2.2   --dport 80  -m conntrack --ctstate NEW  -j RULE_0
     $IPTABLES -A RULE_0  -j LOG  --log-level info --log-prefix "RULE 0 -- ACCEPT "
     $IPTABLES -A RULE_0  -j ACCEPT
     # 
