@@ -214,6 +214,16 @@ def front(ctx):
         "sudo lxc-attach --clear-env -n s3 -- sudo iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 80 -j REDIRECT --to-port 3000")
 
     logger.info("(5/5). Done")
+    question = raw_input("If there are no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        # click.echo(question[0])
+        question = raw_input("If there are no errors, may continue? (y/n)")
+    if question != "y":
+        ctx.invoke(bye)
+        ctx.invoke(destroy)
+    else:
+       ctx.invoke(lb)
+
 
 
 @cli.command()
@@ -354,7 +364,7 @@ def lb(ctx):
 def tlb(ctx):
     """Installs haproxy"""
     logger.info("Test Haproxy")
-    os.system("sudo lxc-attach --clear-env -n fw -- while true; do curl;sleep 0.1; done; ")
+    os.system("sudo lxc-attach --clear-env -n fw -- while true; do curl 20.2.2.2;sleep 0.1; done; ")
 
 @cli.command()
 @click.pass_context
