@@ -375,15 +375,15 @@ def lb(ctx):
     os.system('sudo lxc-attach --clear-env -n lb -- sudo service haproxy restart')
 
 
-    question = raw_input("Check the replication. If no errors, may continue? (y/n)")
-    while question.lower() not in ("y", "n"):
-        # click.echo(question[0])
-        question = input("Check the replication. If there are no errors, may continue? (y/n)")
-    if question != "y":
-        ctx.invoke(bye)
-        ctx.invoke(destroy)
-    else:
-       ctx.invoke(fw)
+    # question = raw_input("Check the replication. If no errors, may continue? (y/n)")
+    # while question.lower() not in ("y", "n"):
+    #     # click.echo(question[0])
+    #     question = input("Check the replication. If there are no errors, may continue? (y/n)")
+    # if question != "y":
+    #     ctx.invoke(bye)
+    #     ctx.invoke(destroy)
+    # else:
+    #    ctx.invoke(fw)
 
 
 @cli.command()
@@ -435,17 +435,17 @@ def tcluster(ctx):
 
     logger.debug("It should not be any files in nas, and files in the nas if it's the fisrt command run")
     logger.debug("And no files in the nas3 if it is the second run")
-    question = raw_input("Check the replication. If no errors, may continue? (y/n)")
-
-    while question.lower() not in ("y", "n"):
-        # click.echo(question[0])
-        question = input("Check the replication. If there are no errors, may continue? (y/n)")
-    if question != "y":
-        ctx.invoke(bye)
-        ctx.invoke(deletetc)
-        ctx.invoke(destroy)
-    else:
-        logger.debug("(3/3) Test done")
+    # question = raw_input("Check the replication. If no errors, may continue? (y/n)")
+    #
+    # while question.lower() not in ("y", "n"):
+    #     # click.echo(question[0])
+    #     question = input("Check the replication. If there are no errors, may continue? (y/n)")
+    # if question != "y":
+    #     ctx.invoke(bye)
+    #     ctx.invoke(deletetc)
+    #     ctx.invoke(destroy)
+    # else:
+    #     logger.debug("(3/3) Test done")
 
 
 @cli.command()
@@ -481,15 +481,15 @@ def fw(ctx):
     cmd_line = "sudo lxc-attach --clear-env -n c1 -- nmap -F 20.2.2.2"
     call(cmd_line, shell=True)
 
-    question = raw_input("If no errors, may continue? (y/n)")
-    while question.lower() not in ("y", "n"):
-        # click.echo(question[0])
-        question = input("If there are no errors, may continue? (y/n)")
-    if question != "y":
-        ctx.invoke(bye)
-        ctx.invoke(destroy)
-    else:
-        logger.info("Configured")
+    # question = raw_input("If no errors, may continue? (y/n)")
+    # while question.lower() not in ("y", "n"):
+    #     # click.echo(question[0])
+    #     question = input("If there are no errors, may continue? (y/n)")
+    # if question != "y":
+    #     ctx.invoke(bye)
+    #     ctx.invoke(destroy)
+    # else:
+    #     logger.info("Configured")
 
 @cli.command()
 @click.pass_context
