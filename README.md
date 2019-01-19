@@ -11,6 +11,8 @@ python3 installClick.py
 . venv/bin/activate
 pip install --editable .
 deploy setupvnx # It will create "pfinal" folder
+cd pfinal
+bin/prepare-pfinal-vm
 ```
 
 ## Usage
