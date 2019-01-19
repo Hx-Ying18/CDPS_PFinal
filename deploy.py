@@ -644,8 +644,32 @@ def ask(ctx):
     while question.lower() not in ("y", "n"):
         click.echo(question[0])
         question = input("If there are no errors, may continue? (y/n)")
-    if question != "y":
+    if question == "n":
         ctx.invoke(bye)
         ctx.invoke(destroy)
+    if question == "t":
+        logger.debug("Let's test")
     else:
         logger.debug("Let's continue")
+
+@cli.command()
+@click.pass_context
+def testask(ctx):
+    """Ask to continue"""
+    question = raw_input("If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        click.echo(question[0])
+        question = input("If there are no errors, may continue? (y/n)")
+    if question == "n":
+        ctx.invoke(bye)
+    if question == "t":
+        logger.debug("Let's test")
+    else:
+        logger.debug("Let's continue")
+
+@cli.command()
+@click.pass_context
+def testask2(ctx):
+    """Ask to continue"""
+    ctx.invoke(testask)
+    ctx.invoke(bye)

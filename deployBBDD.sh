@@ -4,6 +4,7 @@ apt update
 apt -y install mariadb-server
 sed -i -e 's/bind-address.*/bind-address=0.0.0.0/' -e 's/utf8mb4/utf8/' /etc/mysql/mariadb.conf.d/50-server.cnf
 sudo systemctl restart mysql
+sleep 5s
 
 mysqladmin -u root password xxxx
 mysql -u root --password='xxxx' -e "CREATE USER 'quiz' IDENTIFIED BY 'xxxx';"
