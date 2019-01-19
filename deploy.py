@@ -597,7 +597,7 @@ def chain(ctx):
 @cli.command()
 @click.pass_context
 def up(ctx):
-    """Deployment up and running"""
+    """Deployment up"""
     i = 0
     logger.debug("=>{"+str(i)+"/7} Start the deployment")
     ctx.invoke(start)
@@ -606,9 +606,17 @@ def up(ctx):
 
     logger.debug("=>{"+str(i)+"/7} Config the BBDD")
     ctx.invoke(bbdd)
-    ctx.invoke(ask)
+    ctx.invoke(askesp)
     i += 1
 
+
+
+@cli.command()
+@click.pass_context
+def go(ctx):
+    """Deployment, after bbdd check"""
+
+    i = 2
     logger.debug("=>{"+str(i)+"/7} Config the cluster")
     ctx.invoke(cluster)
     ctx.invoke(ask)
@@ -635,6 +643,22 @@ def up(ctx):
     i += 1
 
     logger.debug("=>{" + str(i) + "/7} Up")
+
+@cli.command()
+@click.pass_context
+def ask(ctx):
+    """Ask to continue"""
+    question = raw_input("If no errors, may continue? (y/n)")
+    while question.lower() not in ("y", "n"):
+        click.echo(question[0])
+        question = input("If there are no errors, may continue? (y/n)")
+    if question == "n":
+        ctx.invoke(bye)
+        ctx.invoke(destroy)
+    if question == "t":
+        logger.debug("Let's test")
+    else:
+        logger.debug("Let's continue")
 
 @cli.command()
 @click.pass_context
