@@ -19,7 +19,10 @@ In the directory pfinal/.
 ```bash
 . venv/bin/activate
 cd /pfinal
-deploy up # Complete deployment, followed by questions.
+deploy up # Deployment until bbdd, followed by questions.
+# If mysql cannot be link, say "n", and tehn, another time, deloy up
+# If it is linked
+deploy go
 deploy destroy # Destroy the arquitecture.
 deploy restart # Restart the arquitecture.
 
