@@ -22,10 +22,6 @@ def setupvnx():
     call(line, shell=True)
     line = "sudo vnx --unpack pfinal.tgz"
     call(line, shell=True)
-    line = "cd pfinal"
-    call(line, shell=True)
-    line = "bin/prepare-pfinal-vm"
-    call(line, shell=True)
 
 @cli.command()
 @click.pass_context
