@@ -10,7 +10,8 @@ In teh project: install click and activate the venv; the command will work on th
 python3 installClick.py
 . venv/bin/activate
 pip install --editable .
-cd /pfinal
+deploy setupvnx # It will create "pfinal" folder
+
 ```
 
 ## Usage
@@ -20,7 +21,7 @@ In the directory pfinal/.
 . venv/bin/activate
 cd /pfinal
 deploy up # Deployment until bbdd, followed by questions.
-# If mysql cannot be link, say "n", and tehn, another time, deloy up
+# If mysql cannot be link, say "n", and then, another time, deloy up
 # If it is linked
 deploy go
 deploy destroy # Destroy the arquitecture.
