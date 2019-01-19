@@ -4,7 +4,7 @@ Deploy is a Python CLI for deploying [QUIZ](https://github.com/CORE-UPM/quiz_201
 
 ## Installation
 
-In teh project: install click and activate the venv; the command will work on the directory pfinal/.
+After cloning, in the project: install click, activate the venv and download the vnx files.
 
 ```bash
 python3 installClick.py
