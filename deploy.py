@@ -475,6 +475,9 @@ def fw(ctx):
     cmd_line = "sudo lxc-attach --clear-env -n c1 -- nmap -F 20.2.2.2"
     call(cmd_line, shell=True)
 
+    cmd_line = "sudo lxc-attach --clear-env -n fw -- chmod 777 /root/fw.fw"
+    call(cmd_line, shell=True)
+
     cmd_line = "sudo lxc-attach --clear-env -n fw -- /root/fw.fw"
     call(cmd_line, shell=True)
 
