@@ -218,7 +218,7 @@ def front(ctx):
     ctx.invoke(run)
 
     logger.info("(3/5). Make uploads in the nas ")
-    #ctx.invoke(link)
+    ctx.invoke(link)
 
     logger.info("(4/5). Do prerouting to the port 3000, from 80")
     # ctx.invoke(lynx) if doping this with yes | trigger stuck
