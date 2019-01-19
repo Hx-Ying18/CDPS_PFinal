@@ -606,7 +606,7 @@ def up(ctx):
 
     logger.debug("=>{"+str(i)+"/7} Config the BBDD")
     ctx.invoke(bbdd)
-    ctx.invoke(askesp)
+    ctx.invoke(ask)
     i += 1
 
 
