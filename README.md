@@ -9,6 +9,7 @@ Install click and activate the venv; the command will work on the directory pfin
 ```bash
 python3 installClick.py
 . venv/bin/activate
+pip install --editable .
 cd /pfinal
 ```
 

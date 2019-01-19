@@ -4,7 +4,7 @@
 #
 #  Firewall Builder  fwb_ipt v5.3.7
 #
-#  Generated Sun Jan 13 17:31:58 2019 UTC by root
+#  Generated Fri Jan 18 12:22:38 2019 UTC by root
 #
 # files: * fw.fw /etc/fw.fw
 #
@@ -353,8 +353,8 @@ script_body() {
     # 
     # Permite acceso al servidor web de s1
     $IPTABLES -N RULE_0
-    $IPTABLES -A OUTPUT -p tcp -m tcp  -d 20.2.3.11   --dport 80  -m conntrack --ctstate NEW  -j RULE_0
-    $IPTABLES -A FORWARD -p tcp -m tcp  -d 20.2.3.11   --dport 80  -m conntrack --ctstate NEW  -j RULE_0
+    $IPTABLES -A OUTPUT -p tcp -m tcp  -d 20.2.2.2   --dport 80  -m conntrack --ctstate NEW  -j RULE_0
+    $IPTABLES -A FORWARD -p tcp -m tcp  -d 20.2.2.2   --dport 80  -m conntrack --ctstate NEW  -j RULE_0
     $IPTABLES -A RULE_0  -j LOG  --log-level info --log-prefix "RULE 0 -- ACCEPT "
     $IPTABLES -A RULE_0  -j ACCEPT
     # 
@@ -362,20 +362,11 @@ script_body() {
     # 
     echo "Rule 1 (global)"
     # 
-    # Permite acceso al lb
-    $IPTABLES -N Cid2140X5996.0
-    $IPTABLES -A OUTPUT -p icmp  -m icmp  --icmp-type any  -m conntrack --ctstate NEW  -j Cid2140X5996.0
-    $IPTABLES -A OUTPUT -p tcp -m tcp  --dport 22  -m conntrack --ctstate NEW  -j Cid2140X5996.0
+    # Deja pasar los mensaje ICMP a traves del firewall
     $IPTABLES -N RULE_1
-    $IPTABLES -A Cid2140X5996.0  -d 10.250.0.14   -j RULE_1
-    $IPTABLES -A Cid2140X5996.0  -d 20.2.2.2   -j RULE_1
-    $IPTABLES -A Cid2140X5996.0  -d 20.2.3.1   -j RULE_1
-    $IPTABLES -N Cid2140X5996.1
-    $IPTABLES -A FORWARD -p icmp  -m icmp  --icmp-type any  -m conntrack --ctstate NEW  -j Cid2140X5996.1
-    $IPTABLES -A FORWARD -p tcp -m tcp  --dport 22  -m conntrack --ctstate NEW  -j Cid2140X5996.1
-    $IPTABLES -A Cid2140X5996.1  -d 10.250.0.14   -j RULE_1
-    $IPTABLES -A Cid2140X5996.1  -d 20.2.2.2   -j RULE_1
-    $IPTABLES -A Cid2140X5996.1  -d 20.2.3.1   -j RULE_1
+    $IPTABLES -A OUTPUT -p icmp  -m icmp  --icmp-type any  -m conntrack --ctstate NEW  -j RULE_1
+    $IPTABLES -A INPUT -p icmp  -m icmp  --icmp-type any  -m conntrack --ctstate NEW  -j RULE_1
+    $IPTABLES -A FORWARD -p icmp  -m icmp  --icmp-type any  -m conntrack --ctstate NEW  -j RULE_1
     $IPTABLES -A RULE_1  -j LOG  --log-level info --log-prefix "RULE 1 -- ACCEPT "
     $IPTABLES -A RULE_1  -j ACCEPT
     # 
@@ -507,7 +498,7 @@ test -z "$cmd" && {
 
 case "$cmd" in
     start)
-        log "Activating firewall script generated Sun Jan 13 17:31:58 2019 by root"
+        log "Activating firewall script generated Fri Jan 18 12:22:38 2019 by root"
         check_tools
          prolog_commands 
         check_run_time_address_table_files
