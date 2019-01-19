@@ -38,7 +38,7 @@ deploy --help
 
 For fast deployment:
 ```bash
-yes | deploy up 
+yes | deploy go
 ```
 
 ## Contributing
