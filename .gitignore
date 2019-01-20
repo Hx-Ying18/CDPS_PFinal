@@ -1,0 +1,5 @@
+pfinal.tgz
+pfinal/
+venv/
+CDPS_QUIZ.egg-info/
+deploy.pyc
