@@ -25,6 +25,9 @@ deploy up # Deployment until bbdd, followed by questions.
 # If mysql cannot be link, say "n", and then, another time, deloy up
 # If it is linked
 deploy go
+# To change layout of QUIZ in each server
+cd ..
+python changePages.py
 deploy destroy # Destroy the arquitecture.
 deploy restart # Restart the arquitecture.
 
